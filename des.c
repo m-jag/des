@@ -50,20 +50,42 @@ void initialKeyPermutation(unsigned char pk[])
 					i%8==7? printf("  "): printf(" ");
 				}
 				printf("|\n");
-				int counter = 0;
+				int lowValue = permutatedVal < byte*8 + bit? permutatedVal: byte*8 + bit; //implementation of min
+				int highValue = permutatedVal > byte*8 + bit? permutatedVal: byte*8 + bit; //implementation of max
+				for (int i = 0; i < lowValue; i++)
+				{
+					i%8==7? printf("  "): printf(" ");
+				}
+				printf("+");
+				for (int i = 1; i < highValue - lowValue; i++)
+				{
+					i%8==7 ? printf("--"): printf("-");
+				}
+				printf("+\n");
 				for (int i = 0; i < byte*8 + bit; i++)
 				{
 					i%8==7 ? printf("  "): printf(" ");
 				}
-				printf("+\n");
+				printf("|\n");
+				printf("%s %s %s %s %s %s %s %s\n", byteToBinaryString(pk[0]), byteToBinaryString(pk[1]),
+										byteToBinaryString(pk[2]), byteToBinaryString(pk[3]),
+										byteToBinaryString(pk[4]), byteToBinaryString(pk[5]),
+										byteToBinaryString(pk[6]), byteToBinaryString(pk[7]));
 				//For Debugging: printf("PK = %lu\n", pk[byte]);
 				//For Debugging: printf("key[%d][%d] : %d\n", permutatedVal/8, permutatedVal%8, getbit(key[(permutatedVal)/8], permutatedVal%8));
 				//For Debugging: printf("weight: %d\n", weight);
 			}
 			pk[byte] += getbit(key[(permutatedVal)/8], permutatedVal%8) * weight;
 			weight *= 2;
+			if (verbose >= LEVEL_TWO)
+			{
+				printf("%s %s %s %s %s %s %s %s\n", byteToBinaryString(pk[0]), byteToBinaryString(pk[1]),
+										byteToBinaryString(pk[2]), byteToBinaryString(pk[3]),
+										byteToBinaryString(pk[4]), byteToBinaryString(pk[5]),
+										byteToBinaryString(pk[6]), byteToBinaryString(pk[7]));
+			}
 		}
-		if (verbose >= LEVEL_ONE)
+		if (verbose == LEVEL_ONE)
 		{
 			printf("%s %s %s %s %s %s %s %s\n", byteToBinaryString(pk[0]), byteToBinaryString(pk[1]),
 												byteToBinaryString(pk[2]), byteToBinaryString(pk[3]),

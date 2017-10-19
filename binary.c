@@ -1,8 +1,4 @@
 #include "binary.h"
-//MPI CC script around MPI to find mpi.h
-//DLL collection of code you can embed in another program
-//mpirun to execute mpi programs (to get the dlls)
-//bsub -n 4 -R "span[ptile=1]" -o %J.txt "/opt/ibm/platform_mpi/bin/mpirun -lsf -vapi /home/mjagodzinski3154/helloworld_mpi"
 
 long byte1 = 126;
 
