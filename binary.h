@@ -10,6 +10,9 @@
 char HLT[] = {'0', '1', '2', '3', '4', '5', '6', '7',
 				'8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
 
+// New Comment
+int i = 0;
+
 unsigned char getbit(unsigned char byte, int pos)
 {
 	if (pos >= 8)
