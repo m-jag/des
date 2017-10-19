@@ -47,9 +47,15 @@ void initialKeyPermutation(unsigned char pk[])
 										byteToBinaryString(key[6]), byteToBinaryString(key[7]));
 				for (int i = 0; i < permutatedVal; i++)
 				{
-					i%8==0? printf("  "): printf(" ");
+					i%8==7? printf("  "): printf(" ");
 				}
 				printf("|\n");
+				int counter = 0;
+				for (int i = 0; i < byte*8 + bit; i++)
+				{
+					i%8==7 ? printf("  "): printf(" ");
+				}
+				printf("+\n");
 				//For Debugging: printf("PK = %lu\n", pk[byte]);
 				//For Debugging: printf("key[%d][%d] : %d\n", permutatedVal/8, permutatedVal%8, getbit(key[(permutatedVal)/8], permutatedVal%8));
 				//For Debugging: printf("weight: %d\n", weight);
