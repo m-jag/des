@@ -9,7 +9,7 @@
 int verbose = LEVEL_ONE;
 bool visualIKP = false;
 
-unsigned char key[8] = { 255, 255, 255, 255, 255, 255, 255, 255};
+unsigned char key[8] = { 187, 65, 4, 37, 207, 54, 120, 255};
 
 // return pc1 applied to the key
 void initialKeyPermutation(unsigned char pk[])
@@ -131,6 +131,8 @@ void initialKeyPermutation(unsigned char pk[])
 		printf(" ---------------------------------- \n");
 	}
 }
+
+void applyPC2(unsigned char [], unsigned char [])
 
 void keyRounds(unsigned char keys[][])
 {
