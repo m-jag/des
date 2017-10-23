@@ -13,18 +13,18 @@ char HLT[] = {'0', '1', '2', '3', '4', '5', '6', '7',
 
 uint8_t getbit(uint64_t byte, int pos)
 {
-	if (pos >= 64)
+	if (pos >= 64 || pos < 0)
 	{
+		printf("Invalid position\n");
 		return -1;
 	}
-	return (byte >> pos) % 2;
+	return (byte >> (63 - pos)) % 2;
 }
 
 //01010101 --> {'0', '1', '0', '1', '0', '1', '0', '1', '\0'}
-char *byteToBinaryString(uint8_t byte)
+char *byteToBinaryString(uint8_t byte, char *str)
 {
 	const int bits = 8;
-	char *str = malloc(bits+1);
 	for(int b = bits - 1; b >=0; b--)
 	{
 		str[b] = byte%2 == 1? '1':'0';
@@ -117,4 +117,39 @@ uint64_t stringToHex(char *str)
 	}
 	return hexValue;
 }
+
+
+// For print values
+char *buildString(uint64_t value)
+{
+	char *str = malloc(64 + 1);
+	uint64_t lowest_byte_mask = stringToBin("11111111");
+	int used_bytes = 0;
+	for (int i = 7; i >= 0; i--)
+	{
+		uint8_t byte_value = (value >> i*8) & lowest_byte_mask;
+		byteToBinaryString(byte_value, &str[(used_bytes++)*8]);
+	}
+
+	return str;
+}
+
+
+// For print values
+char *addByteSeperators(char *str, char sep)
+{
+	char *str_sep = malloc(64 + 1 + 7);
+	int num_sep = 0;
+	for (int i = 0; i < 8; i++)
+	{
+		strncpy(&str_sep[i*8+i], &str[i*8], 8);
+		str_sep[(i + 1)*8 + num_sep] = sep;
+		num_sep++;
+	}
+	str_sep[64 + 7] = '\0';
+
+	return str_sep;
+}
+
+
 #endif
