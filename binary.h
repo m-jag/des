@@ -6,13 +6,14 @@
 #include <string.h>
 #include <ctype.h>
 #include <stdbool.h>
+#include <stdint.h>
 
 char HLT[] = {'0', '1', '2', '3', '4', '5', '6', '7',
 				'8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
 
-unsigned char getbit(unsigned char byte, int pos)
+uint8_t getbit(uint64_t byte, int pos)
 {
-	if (pos >= 8)
+	if (pos >= 64)
 	{
 		return -1;
 	}
@@ -20,7 +21,7 @@ unsigned char getbit(unsigned char byte, int pos)
 }
 
 //01010101 --> {'0', '1', '0', '1', '0', '1', '0', '1', '\0'}
-char *byteToBinaryString(unsigned char byte)
+char *byteToBinaryString(uint8_t byte)
 {
 	const int bits = 8;
 	char *str = malloc(bits+1);
@@ -35,7 +36,7 @@ char *byteToBinaryString(unsigned char byte)
 }
 
 //
-char *byteToHexString(unsigned char byte)
+char *byteToHexString(uint8_t byte)
 {
 	int hexChars = 2;
 	char *str = malloc(hexChars + 1);
@@ -49,24 +50,24 @@ char *byteToHexString(unsigned char byte)
 	return str;
 }
 
-unsigned char stringToBin(char *str)
+uint64_t stringToBin(char *str)
 {
-	if (strlen(str) > 8)
+	if (strlen(str) > 64)
 	{
-		printf("Binary value is too large for an unsigned long value.\n");
+		printf("Binary value is larger than 64 bits.\n");
 		return 0;
 	}
-	unsigned long binValue = 0;
-	unsigned long weight = 1;
+	uint64_t binValue = 0;
+	uint64_t weight = 1;
 	for (int i = strlen(str) - 1; i >= 0; i--)
 	{
-		if (isdigit(str[i]))
+		if (str[i]=='0' || str[i]=='1')
 		{
 			binValue += (str[i] - '0')* weight;
 		}
 		else
 		{
-			printf("Input contains non-numeric values: %s\n", str);
+			printf("Input contains non-binary values: %s\n", str);
 			break;
 		}
 		weight = weight*2;
@@ -74,18 +75,18 @@ unsigned char stringToBin(char *str)
 	return binValue;
 }
 
-unsigned char stringToHex(char *str)
+uint64_t stringToHex(char *str)
 {
-	if (strlen(str) > 2)
+	if (strlen(str) > 8)
 	{
 		printf("Hex value is too large for an unsigned long value.\n");
 		return 0;
 	}
-	unsigned long hexValue = 0;
-	unsigned long weight = 1;
+	uint64_t hexValue = 0;
+	uint64_t weight = 1;
 	for (int i = strlen(str) - 1; i >= 0; i--)
 	{
-		int digitValue = 0;
+		uint8_t digitValue = 0;
 		bool unknownValue = false;
 		switch(str[i])
 		{

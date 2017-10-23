@@ -1,6 +1,6 @@
 #include "binary.h"
 
-long byte1 = 126;
+uint64_t byte1 = 126;
 
 int main(int argc, char *argv[])
 {
