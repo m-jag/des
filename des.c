@@ -56,7 +56,7 @@ int main(int argc, char **argv)
 	char *str = addByteSeperators(buildString(key),  '-');
 	printf("key: %s\n", str);
 	str = addByteSeperators(buildString(pk),  '-');
-	printf("key: %s\n", str);
+	printf("permutated key: %s\n", str);
 	free(str);
 	//unsigned char keys[16][6];//[number of key rounds][size of key in bytes]
 }
