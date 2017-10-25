@@ -4,6 +4,7 @@
 
 
 uint64_t d_mask = 0xFFFFFFF;
+uint8_t round = 0;
 uint64_t cd = 0;
 
 uint64_t initialKeyPermutation(uint64_t key)
@@ -11,17 +12,19 @@ uint64_t initialKeyPermutation(uint64_t key)
 	uint64_t pk = 0;
 
 	uint64_t weight = 1;
-	uint8_t permutatedVal;
+	uint8_t pos;
 	for (int byte = 7; byte >= 0; byte--)
 	{
 		for (int bit = 6; bit >= 0; bit--)
 		{
-			permutatedVal = pc1[byte][bit] - 1;
-			pk += getbit(key, permutatedVal) * weight;
-			//printf("PC-1:%d Byte: %d Bit:%d Value:%d\n", permutatedVal+1, byte, bit, getbit(key, permutatedVal));
+			pos = pc1[byte][bit];
+			pk += ((key >> (64 - pos)) % 2) * weight;
+			//printf("PC-1:%d Byte: %d Bit:%d Value:%d\n", pos, byte, bit, ((key >> (64 - pos)) % 2));
 			weight *= 2;
 		}
 	}
+	printf("Key \t%s\n", addByteSeperators(buildString(key),  '-'));
+	printf("PK \t%s\n", addByteSeperators(buildString(pk),  '-'));
 
 	return pk;
 }
@@ -30,15 +33,16 @@ uint64_t initialKeyPermutation(uint64_t key)
 uint64_t applyPC2(uint64_t c_d)
 {
 	uint64_t subkey = 0;
+
 	uint64_t weight = 1;
-	uint8_t permutatedVal;
+	uint8_t pos;
 	for (int byte = 7; byte >= 0; byte--)
 	{
 		for (int bit = 5; bit >= 0; bit--)
 		{
-			permutatedVal = pc2[byte][bit] - 1;
-			subkey += getbit(c_d, permutatedVal) * weight;
-			//printf("PC-1:%d Byte: %d Bit:%d Value:%d\n", permutatedVal+1, byte, bit, getbit(key, permutatedVal));
+			pos = pc2[byte][bit];
+			subkey += ((c_d >> (56 - pos)) % 2) * weight;
+			//printf("PC-1:%d Byte: %d Bit:%d Value:%d\n", pos, byte, bit, ((c_d >> (56 - pos)) % 2));
 			weight *= 2;
 		}
 	}
@@ -68,7 +72,7 @@ uint64_t key_round(int round)
 	cd = ((uint64_t) c << 28) + d; // Combine c and d
 
 	uint64_t round_key = applyPC2(cd);
-	printf("Round Key %d: \t%s\n", round, addByteSeperators(buildString(round_key),  '-'));
+	//printf("Round Key %d: \t%s\n", round, addByteSeperators(buildString(round_key),  '-'));
 	
 	//printf("C %d: \t%s\n", round, addByteSeperators(buildString(c),  '-'));
 	
@@ -80,23 +84,25 @@ uint64_t key_round(int round)
 void runDES(uint64_t key, char *message)
 {
 	printf("DES: Code in Development\n");
-
+	round = 0;
 	uint64_t round_key = 0;
 	cd = initialKeyPermutation(key);
-	printf("PK: %s\n", addByteSeperators(buildString(cd),  '-'));
+	//printf("PK: %s\n", addByteSeperators(buildString(cd),  '-'));
 	// get lower 28 bits and store in a 32 bit memory address
 	for (int r = 1; r <= 16; r++)
 	{
 		//printf("Round %d\n", r);
 		round_key = key_round(r);
-		//printf("Round %d Key: %s\n", r, addByteSeperators(buildString(round_key),  '-'));
+		printf("Round %d Key: %s\n", r, addByteSeperators(buildString(round_key),  '-'));
+		//printf("CD %d : %s\n", r, addByteSeperators(buildString(cd),  '-'));
 	}
 }
 
 int main(int argc, char **argv)
 {
-	//uint64_t key = stringToBin("0001001100110100010101110111100110011011101111001101111111110001");
-	uint64_t key = stringToBin("1111111111111111111111111111111111111111111111111111111111111111");
+	uint64_t key = stringToBin("0001001100110100010101110111100110011011101111001101111111110001");
+	//uint64_t key = stringToBin("1110111011111111111111111111111111111111111111111111111111111111");
+	//uint64_t key = stringToBin("1111111111111111111111111111111111111111111111111111111111111111");
 	runDES(key, "Hello World!");
 	//unsigned char keys[16][6];//[number of key rounds][size of key in bytes]
 }
