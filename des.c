@@ -27,7 +27,7 @@ uint64_t initialKeyPermutation(uint64_t key)
 }
 
 // return pc2 applied to generate a round of the key (56 -> 48)
-uint64_t applyPC2(uint64_t cd)
+uint64_t applyPC2(uint64_t c_d)
 {
 	uint64_t subkey = 0;
 	uint64_t weight = 1;
@@ -37,12 +37,12 @@ uint64_t applyPC2(uint64_t cd)
 		for (int bit = 5; bit >= 0; bit--)
 		{
 			permutatedVal = pc2[byte][bit] - 1;
-			cd += getbit(cd, permutatedVal) * weight;
+			subkey += getbit(c_d, permutatedVal) * weight;
 			//printf("PC-1:%d Byte: %d Bit:%d Value:%d\n", permutatedVal+1, byte, bit, getbit(key, permutatedVal));
 			weight *= 2;
 		}
 	}
-	return cd;
+	return subkey;
 }
 
 // shifts lower 28 bits by given amount and wraps upper bits
@@ -51,7 +51,7 @@ uint32_t shift(uint32_t val, int shift)
 	val <<= shift;
 	// msbs - most significant bits
 	// grab the bits that need to be wrapped
-	uint32_t msbs = (val >> 28) % 2;
+	uint32_t msbs = val >> 28;
 	val += msbs;
 	val &= 0xFFFFFFF; //remove excess bits
 	return val;	
@@ -66,14 +66,14 @@ uint64_t key_round(int round)
 	c = shift(c, shift_amt);
 	d = shift(d, shift_amt);
 	cd = ((uint64_t) c << 28) + d; // Combine c and d
-	//printf("Round Key %d: \t%s\n", round, addByteSeperators(buildString(round_key),  '-'));
-	
-	printf("C %d: \t%s\n", round, addByteSeperators(buildString(c),  '-'));
-	
-	printf("D %d: \t%s\n", round, addByteSeperators(buildString(d),  '-'));
-	
 
 	uint64_t round_key = applyPC2(cd);
+	printf("Round Key %d: \t%s\n", round, addByteSeperators(buildString(round_key),  '-'));
+	
+	//printf("C %d: \t%s\n", round, addByteSeperators(buildString(c),  '-'));
+	
+	//printf("D %d: \t%s\n", round, addByteSeperators(buildString(d),  '-'));
+
 	return round_key;
 }
 
@@ -89,13 +89,14 @@ void runDES(uint64_t key, char *message)
 	{
 		//printf("Round %d\n", r);
 		round_key = key_round(r);
+		//printf("Round %d Key: %s\n", r, addByteSeperators(buildString(round_key),  '-'));
 	}
 }
 
 int main(int argc, char **argv)
 {
-	uint64_t key = stringToBin("0001001100110100010101110111100110011011101111001101111111110001");
-	//uint64_t key = stringToBin("1111111111111111111111111111111111111111111111111111111111111111");
+	//uint64_t key = stringToBin("0001001100110100010101110111100110011011101111001101111111110001");
+	uint64_t key = stringToBin("1111111111111111111111111111111111111111111111111111111111111111");
 	runDES(key, "Hello World!");
 	//unsigned char keys[16][6];//[number of key rounds][size of key in bytes]
 }
