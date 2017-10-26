@@ -4,7 +4,6 @@
 
 
 uint64_t d_mask = 0xFFFFFFF;
-uint8_t round = 0;
 uint64_t cd = 0;
 
 uint64_t initialKeyPermutation(uint64_t key)
@@ -23,8 +22,8 @@ uint64_t initialKeyPermutation(uint64_t key)
 			weight *= 2;
 		}
 	}
-	printf("Key \t%s\n", addByteSeperators(buildString(key),  '-'));
-	printf("PK \t%s\n", addByteSeperators(buildString(pk),  '-'));
+	printf("Key \t%s\n", addByteSeperators(buildBinaryString(key),  '-'));
+	printf("PK \t%s\n", addByteSeperators(buildBinaryString(pk),  '-'));
 
 	return pk;
 }
@@ -69,14 +68,17 @@ uint64_t key_round(int round)
 	int shift_amt = round == 1 || round == 2 || round == 9 ||  round == 16 ? 1: 2;
 	c = shift(c, shift_amt);
 	d = shift(d, shift_amt);
-	cd = ((uint64_t) c << 28) + d; // Combine c and d
+	// Combine c and d (each are 28 bits)
+	// Have to convert c to 64 bit integer before shift 
+	// because otherwise it overflows and results in c = 0
+	cd = ((uint64_t) c << 28) + d; 
 
 	uint64_t round_key = applyPC2(cd);
-	//printf("Round Key %d: \t%s\n", round, addByteSeperators(buildString(round_key),  '-'));
+	//printf("Round Key %d: \t%s\n", round, addByteSeperators(buildBinaryString(round_key),  '-'));
 	
-	//printf("C %d: \t%s\n", round, addByteSeperators(buildString(c),  '-'));
+	//printf("C %d: \t%s\n", round, addByteSeperators(buildBinaryString(c),  '-'));
 	
-	//printf("D %d: \t%s\n", round, addByteSeperators(buildString(d),  '-'));
+	//printf("D %d: \t%s\n", round, addByteSeperators(buildBinaryString(d),  '-'));
 
 	return round_key;
 }
@@ -84,17 +86,16 @@ uint64_t key_round(int round)
 void runDES(uint64_t key, char *message)
 {
 	printf("DES: Code in Development\n");
-	round = 0;
 	uint64_t round_key = 0;
 	cd = initialKeyPermutation(key);
-	//printf("PK: %s\n", addByteSeperators(buildString(cd),  '-'));
+	//printf("PK: %s\n", addByteSeperators(buildBinaryString(cd),  '-'));
 	// get lower 28 bits and store in a 32 bit memory address
 	for (int r = 1; r <= 16; r++)
 	{
 		//printf("Round %d\n", r);
 		round_key = key_round(r);
-		printf("Round %d Key: %s\n", r, addByteSeperators(buildString(round_key),  '-'));
-		//printf("CD %d : %s\n", r, addByteSeperators(buildString(cd),  '-'));
+		printf("Round %d Key: %s\n", r, addByteSeperators(buildBinaryString(round_key),  '-'));
+		//printf("CD %d : %s\n", r, addByteSeperators(buildBinaryString(cd),  '-'));
 	}
 }
 

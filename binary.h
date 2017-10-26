@@ -11,6 +11,7 @@
 char HLT[] = {'0', '1', '2', '3', '4', '5', '6', '7',
 				'8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
 
+//Converts unsigned 8 bit integer to string representing binary representation
 //01010101 --> {'0', '1', '0', '1', '0', '1', '0', '1', '\0'}
 char *byteToBinaryString(uint8_t byte, char *str)
 {
@@ -25,7 +26,8 @@ char *byteToBinaryString(uint8_t byte, char *str)
 	return str;
 }
 
-//
+//Converts unsigned 8 bit integer to string representing hex representation
+//17 --> {'1','1'} 
 char *byteToHexString(uint8_t byte)
 {
 	int hexChars = 2;
@@ -40,6 +42,7 @@ char *byteToHexString(uint8_t byte)
 	return str;
 }
 
+//Converts 64 character string (of 1's and 0's) to an unsigned integer
 uint64_t stringToBin(char *str)
 {
 	if (strlen(str) > 64)
@@ -65,6 +68,7 @@ uint64_t stringToBin(char *str)
 	return binValue;
 }
 
+//Converts 8 character string (of hex characters) to an unsigned integer
 uint64_t stringToHex(char *str)
 {
 	if (strlen(str) > 8)
@@ -109,8 +113,8 @@ uint64_t stringToHex(char *str)
 }
 
 
-// For print values
-char *buildString(uint64_t value)
+// For printing values 64
+char *buildBinaryString(uint64_t value)
 {
 	char *str = malloc(64 + 1);
 	uint64_t lowest_byte_mask = stringToBin("11111111");
@@ -125,7 +129,7 @@ char *buildString(uint64_t value)
 }
 
 
-// For print values
+// For adding a character to between each 8 characters for output of buildBinaryString
 char *addByteSeperators(char *str, char sep)
 {
 	char *str_sep = malloc(64 + 1 + 7);

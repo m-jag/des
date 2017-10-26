@@ -1,3 +1,5 @@
+Example of desired goal for verbose output formatting
+/** Hasn't been implemented yet **/
 --------
 PC-1 : 9
  - Key -
