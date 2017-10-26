@@ -2,6 +2,7 @@
 #include "binary.h"
 #include "des_tables.h"
 
+int message_length = 0;
 
 uint64_t d_mask = 0xFFFFFFF;
 uint64_t cd = 0;
@@ -10,16 +11,15 @@ uint64_t initialKeyPermutation(uint64_t key)
 {
 	uint64_t pk = 0;
 
-	uint64_t weight = 1;
 	uint8_t pos;
-	for (int byte = 7; byte >= 0; byte--)
+	for (int byte = 0; byte < 8; byte++)
 	{
-		for (int bit = 6; bit >= 0; bit--)
+		for (int bit = 0; bit < 7; bit++)
 		{
 			pos = pc1[byte][bit];
-			pk += ((key >> (64 - pos)) % 2) * weight;
+			pk <<= 1;
+			pk += ((key >> (64 - pos)) % 2);
 			//printf("PC-1:%d Byte: %d Bit:%d Value:%d\n", pos, byte, bit, ((key >> (64 - pos)) % 2));
-			weight *= 2;
 		}
 	}
 	printf("Key \t%s\n", addByteSeperators(buildBinaryString(key),  '-'));
@@ -33,16 +33,15 @@ uint64_t applyPC2(uint64_t c_d)
 {
 	uint64_t subkey = 0;
 
-	uint64_t weight = 1;
 	uint8_t pos;
-	for (int byte = 7; byte >= 0; byte--)
+	for (int byte = 0; byte < 8; byte++)
 	{
-		for (int bit = 5; bit >= 0; bit--)
+		for (int bit = 0; bit < 6; bit++)
 		{
 			pos = pc2[byte][bit];
-			subkey += ((c_d >> (56 - pos)) % 2) * weight;
+			subkey <<= 1;
+			subkey += ((c_d >> (56 - pos)) % 2);
 			//printf("PC-1:%d Byte: %d Bit:%d Value:%d\n", pos, byte, bit, ((c_d >> (56 - pos)) % 2));
-			weight *= 2;
 		}
 	}
 	return subkey;
@@ -96,7 +95,23 @@ void runDES(uint64_t key, char *message)
 		round_key = key_round(r);
 		printf("Round %d Key: %s\n", r, addByteSeperators(buildBinaryString(round_key),  '-'));
 		//printf("CD %d : %s\n", r, addByteSeperators(buildBinaryString(cd),  '-'));
+
 	}
+}
+
+uint64_t grabBlock(char* message)
+{
+	uint64_t block = 0;
+	for (int byte = 0; byte < 8; byte++)
+	{
+		if (*message)
+		{
+			block += *message;
+			message++;
+		}
+		block << 8;
+	}
+	return block;
 }
 
 int main(int argc, char **argv)
